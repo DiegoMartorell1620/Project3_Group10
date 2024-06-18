@@ -78,6 +78,106 @@ function calculateAndDisplaySummary(selectedYear) {
 
 }
 
+function Accidentgraph(year) {
+  d3.json('Resources/traffic_accidents_data.json').then((data) => {
+      // Convert year to number
+      year = +year;
+      // Filter the data for the specified year
+      let dataForYear = data.filter(d => d.YEAR === year);
+      // Group the data by neighborhood and count the occurrences
+      let accidentCountByNeighborhood = d3.rollup(
+        dataForYear,
+        v => v.length,
+        d => d.NEIGHBOURHOOD_158
+      );
+      // Sort the neighborhoods by accident count in descending order and get the top 10
+      let topNeighborhoods = Array.from(accidentCountByNeighborhood)
+        .sort((a, b) => b[1] - a[1]) // Sort in descending order by count
+        .slice(0, 10); // Get the top 10 neighborhoods
+      // Extract the neighborhood names and counts for the chart
+      let neighborhoods = topNeighborhoods.map(d => d[0]);
+      let accidentCounts = topNeighborhoods.map(d => d[1]);
+      console.log(accidentCountByNeighborhood);
+      // Create a bar chart using Plotly
+      let trace = {
+        x: neighborhoods,
+        y: accidentCounts,
+        type: 'bar'
+      };
+      let layout = {
+        title: `Top 10 Neighborhoods with highest # Accidents in ${year}`,
+        yaxis: { title: '# of Accidents' }
+      };
+      Plotly.newPlot('bar2', [trace], layout);
+  });
+}
+function Theftgraph(year) {
+  d3.json('Resources/theft_data.json').then((data) => {
+      // Convert year to number
+      year = +year;
+      // Filter the data for the specified year
+      let dataForYear = data.filter(d => d.YEAR === year);
+      // Group the data by neighborhood and count the occurrences
+      let theftCountByNeighborhood = d3.rollup(
+        dataForYear,
+        v => v.length,
+        d => d.NEIGHBOURHOOD_158
+      );
+      // Sort the neighborhoods by theft count in descending order and get the top 10
+      let topNeighborhoods = Array.from(theftCountByNeighborhood)
+        .sort((a, b) => b[1] - a[1]) // Sort in descending order by count
+        .slice(0, 10); // Get the top 10 neighborhoods
+      // Extract the neighborhood names and counts for the chart
+      let neighborhoods = topNeighborhoods.map(d => d[0]);
+      let theftCounts = topNeighborhoods.map(d => d[1]);
+      // Create a bar chart using Plotly
+      let trace = {
+        x: neighborhoods,
+        y: theftCounts,
+        type: 'bar'
+      };
+      let layout = {
+        title: `Top 10 Neighborhoods with highest # of Thefts in ${year}`,
+        yaxis: { title: '# of thefts' }
+      };
+      Plotly.newPlot('bar1', [trace], layout);
+  });
+}
+
+
+function Piechart(year) {
+  d3.json('Resources/traffic_accidents_data.json').then((data) => {
+      // Convert year to number
+      year = +year;
+      // Filter the data for the specified year
+      let dataForYear = data.filter(d => d.YEAR === year);
+      // Group the data by neighborhood and count the occurrences
+      let accidentCountByNeighborhood = d3.rollup(
+        dataForYear,
+        v => v.length,
+        d => d.NEIGHBOURHOOD_158
+      );
+      // Sort the neighborhoods by accident count in descending order and get the top 10
+      let topNeighborhoods = Array.from(accidentCountByNeighborhood)
+        .sort((a, b) => b[1] - a[1]) // Sort in descending order by count
+        .slice(0, 10); // Get the top 10 neighborhoods
+      // Extract the neighborhood names and counts for the chart
+      let neighborhoods = topNeighborhoods.map(d => d[0]);
+      let accidentCounts = topNeighborhoods.map(d => d[1]);
+      // Create a bar chart using Plotly
+      let trace = {
+        values: accidentCounts,
+        labels: neighborhoods,
+        type: 'pie'
+      };
+      let layout = {
+        title: `Top 10 Neighborhoods with highest # Accidents in ${year}`,
+        height: 400,
+        width: 500
+      };
+      Plotly.newPlot('pie1', [trace], layout);
+  });
+}
 
 // Function to run on page load
 function init() {
@@ -99,11 +199,17 @@ function init() {
     
       // Build charts and metadata panel with the first year
       calculateAndDisplaySummary(firstYear);
+      Theftgraph(firstYear);
+      Accidentgraph(firstYear);
+      Piechart(firstYear);
      //buildCharts(firstYear);
     //Update the optionChanged function to handle the selection of a new year:
     function optionChanged(newYear) {
       // Build charts and metadata panel each time a new year is selected
       calculateAndDisplaySummary(newYear);
+      Theftgraph(newYear);
+      Accidentgraph(newYear);
+      Piechart(newYear);
       //buildCharts(newYear);
     }
     //Update the event listener to call the optionChanged function when a new year is selected:

@@ -1,27 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Traffic</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-   
-
   <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
     crossorigin=""/>
-  
   <!-- Leaflet JavaScript code -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
   integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
   crossorigin=""></script>
+  <link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
-
   <div class="container">
     <div class="row">
       <div class="col-md-12 p-5 text-center bg-light">
@@ -41,27 +36,36 @@
           <div class="card-header">
             <h4 class="card-title">Summary</h4>
           </div>
+          <div id="sample-metadata" class="card-body"></div>
           <div id="summary-panel" class="card-body"></div>
         </div>
-    
+        </div>
+        
       </div>
       <div class="col-md-9">
-        <div id="bar"></div>
+        <div id="pie1"></div>
       </div>
     </div>
     <div class="row">
       <div class="col-md-12">
+        <div id="bar2"></div>
+      </div>
+      <br>
+      <br>
+      <div class="col-md-15">
+        <div id="bar1"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-15">
         <div id="bubble"></div>
       </div>
     </div>
   </div>
   <div id="map"></div>
-
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   <script src="app.js"></script>
-
 </body>
-
 </html>
