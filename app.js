@@ -104,8 +104,9 @@ function Accidentgraph(year) {
         type: 'bar'
       };
       let layout = {
-        //width: 400,  
+       // width: 500,  
         //height: 300,
+        margin: { t: 20, l: 50, r: 50, b: 50 },
         title: `Top 10 Neighborhoods with highest # Accidents in ${year}`,
         yaxis: { title: '# of Accidents' }
       };
@@ -138,49 +139,13 @@ function Theftgraph(year) {
         type: 'bar'
       };
       let layout = {
-        //width: 700,  // Adjust width as needed
-        //height: 700,
+        //width: 500,  // Adjust width as needed
+        //height: 300,
+        margin: { t: 20, l: 50, r: 50, b: 50 },
         title: `Top 10 Neighborhoods with highest # of Thefts in ${year}`,
         yaxis: { title: '# of thefts' }
       };
       Plotly.newPlot('bar1', [trace], layout);
-  });
-}
-
-
-function Piechart(year) {
-  d3.json('Resources/traffic_accidents_data.json').then((data) => {
-      // Convert year to number
-      year = +year;
-      // Filter the data for the specified year
-      let dataForYear = data.filter(d => d.YEAR === year);
-      // Group the data by neighborhood and count the occurrences
-      let accidentCountByNeighborhood = d3.rollup(
-        dataForYear,
-        v => v.length,
-        d => d.NEIGHBOURHOOD_158
-      );
-      // Sort the neighborhoods by accident count in descending order and get the top 10
-      let topNeighborhoods = Array.from(accidentCountByNeighborhood)
-        .sort((a, b) => b[1] - a[1]) // Sort in descending order by count
-        .slice(0, 10); // Get the top 10 neighborhoods
-      // Extract the neighborhood names and counts for the chart
-      let neighborhoods = topNeighborhoods.map(d => d[0]);
-      let accidentCounts = topNeighborhoods.map(d => d[1]);
-
-      // Create a bar chart using Plotly
-      let trace = {
-        values: accidentCounts,
-        labels: neighborhoods,
-        type: 'pie'
-      };
-
-      let layout = {
-        title: `Top 10 Neighborhoods with highest # Accidents in ${year}`,
-        //height: 400,
-        //width: 500
-      };
-      Plotly.newPlot('pie1', [trace], layout);
   });
 }
 
@@ -206,8 +171,8 @@ function init() {
       calculateAndDisplaySummary(firstYear);
       Theftgraph(firstYear);
       Accidentgraph(firstYear);
-      Piechart(firstYear);
       googleChart(firstYear);
+      plotlyScatter(firstYear)
 
 
      
@@ -217,8 +182,8 @@ function init() {
       calculateAndDisplaySummary(newYear);
       Theftgraph(newYear);
       Accidentgraph(newYear);
-      Piechart(newYear);
-      googleChart(firstYear);
+      googleChart(newyear);
+      plotlyScatter(newyear);
       
     }
     //Update the event listener to call the optionChanged function when a new year is selected:
@@ -328,7 +293,50 @@ function googleChart(year) {
   })
 }};
 
+function plotlyScatter(year) {
+  d3.json('Resources/traffic_accidents_data.json').then((data) => {
+    // Convert year to number
+    year = +year;
+    // Filter the data for the specified year
+    let dataForYear = data.filter(d => d.YEAR === year);
+    // Group the data by neighborhood and count the occurrences
+    let theftReportByMonth = d3.rollup(
+      dataForYear,
+      v => v.length,
+      d => d.REPORT_MONTH
 
+    );
+
+    console.log(theftReportByMonth);
+
+    // Sort the neighborhoods by accident count in descending order and get the top 10
+    let monthlyReport = Array.from(theftReportByMonth )
+      .sort((a, b) => b[1] - a[1]) 
+      .slice(0, 10);
+
+    // Extract the months and counts for the chart
+    let months = monthlyReport.map(d => d[0]);
+    let accidentCounts = monthlyReport.map(d => d[1]);
+
+    // console.log(months);
+    // console.log(accidentCounts);
+
+    // Create a scatter plot using Plotly
+    let trace = {
+      y: accidentCounts,
+      x: months,
+      mode: 'markers',
+      type: 'scatter',
+      marker: { size: 12 }
+    };
+
+    layout = {
+          title: `Car thefts reported each month for ${year}`
+    };
+
+    Plotly.newPlot('scatter', [trace], layout);
+});
+}
    
 
     
