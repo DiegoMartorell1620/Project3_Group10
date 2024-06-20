@@ -74,7 +74,144 @@ function calculateAndDisplaySummary(selectedYear) {
     })
 
 }
+// Function to create a pie chart showing accidents by age using Chart.js
+function AccidentsByAgePieChart(year) {
+  // Load the JSON data for accidents
+  d3.json('Resources/traffic_accidents_data.json').then(data => {
+    // Filter data by year
+    data = data.filter(d => d.YEAR === year);
 
+    // Filter out data where age is unknown or not specified
+    data = data.filter(d => d.INVAGE !== null && d.INVAGE !== undefined && d.INVAGE !== '');
+
+    // Define age categories 
+    let ageCategories = {
+      "0 to 4": "< 20",
+      "5 to 9": "< 20",
+      "10 to 14": "< 20",
+      "15 to 19": "< 20",
+      "20 to 24": "20-29",
+      "25 to 29": "20-29",
+      "30 to 34": "30-39",
+      "35 to 39": "30-39",
+      "40 to 44": "40-49",
+      "45 to 49": "40-49",
+      "50 to 54": "50-59",
+      "55 to 59": "50-59",
+      "60 to 64": "60-69",
+      "65 to 69": "60-69",
+      "70 to 74": "70+",
+      "75 to 79": "70+",
+      "80 to 84": "70+",
+      "85 to 89": "70+",
+      "90 to 94": "70+",
+      "Over 95": "70+",
+      "unknown": "Unknown"
+    };
+
+    let orderedLabels = ["< 20", "20-29", "30-39", "40-49", "50-59", "60-69", "70+", "Unknown"];
+
+    // Group data by age and count occurrences in each category
+    let accidentCountByAgeCategory = data.reduce((acc, cur) => {
+      let ageRange = cur.INVAGE;
+      let ageCategory = ageCategories[ageRange] || "Unknown";
+      acc[ageCategory] = (acc[ageCategory] || 0) + 1;
+      return acc;
+    }, {});
+
+    // Extract labels and data for the chart
+    let labels = orderedLabels.filter(label => accidentCountByAgeCategory[label] !== undefined);
+    let dataCounts = labels.map(label => accidentCountByAgeCategory[label]);
+
+    // Define colors for each category 
+    let colors = [
+      '#FF6384', 
+      '#36A2EB',
+      '#FFCE56', 
+      '#4BC0C0', 
+      '#9966FF', 
+      '#FF8C00', 
+      '#008000',
+      '#7C7C7C'
+        ];
+
+    // Chart.js configuration
+    let config = {
+      type: 'pie',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: dataCounts,
+          backgroundColor: colors.slice(0, labels.length), 
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        aspectRatio: 2, 
+        maintainAspectRatio: true,
+        plugins: {
+        title: {
+          display: true,
+          text: `Involved Party in Accidents by Age Group in ${year}`,
+          font: {
+            size: 20},
+            padding: 20
+        },
+          legend: {
+            position: 'top',
+            labels: {
+              // Generate legend items
+              generateLabels: function(chart) {
+                let labels = chart.data.labels;
+                let datasets = chart.data.datasets;
+                let legendItems = labels.map((label, i) => {
+                  return {
+                    text: label,
+                    fillStyle: datasets[0].backgroundColor[i],
+                    hidden: false,
+                    index: i
+                  };
+                });
+
+                // Arrange the order of legend items
+                legendItems.sort((a, b) => {
+                  let order = {
+                    "< 20": 0,
+                    "20-29": 1,
+                    "30-39": 2,
+                    "40-49": 3,
+                    "50-59": 4,
+                    "60-69": 5,
+                    "70+": 6,
+                    "Unknown": 7
+                  };
+                });
+
+                 return legendItems;
+              },
+              padding: 20
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(tooltipItem) {
+                return `${tooltipItem.label}: ${tooltipItem.raw}`;
+              }
+            }
+          }
+        }
+      }
+    };
+
+    // Get the canvas element
+    let ctx = document.getElementById('accidentsByAgeChart').getContext('2d');
+  
+    // Create the pie chart
+    let myPieChart = new Chart(ctx, config);
+  })
+
+}
 function Accidentgraph(year) {
   d3.json('Resources/traffic_accidents_data.json').then((data) => {
       // Convert year to number
@@ -173,6 +310,7 @@ function init() {
       googleChart(firstYear);
       plotlyScatter(firstYear);
       leafletmap(firstYear);
+      AccidentsByAgePieChart(firstYear);
 
 
      
@@ -185,6 +323,7 @@ function init() {
       googleChart(newYear);
       plotlyScatter(newYear);
       leafletmap(newYear);
+      AccidentsByAgePieChart(newYear);
       
     }
     //Update the event listener to call the optionChanged function when a new year is selected:
@@ -418,6 +557,7 @@ function leafletmap(year) {
 
   
     
+
 
 
 
