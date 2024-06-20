@@ -309,8 +309,6 @@ function plotlyScatter(year) {
 
     );
 
-    console.log(dataForYear);
-
     // Sort the neighborhoods by accident count in descending order and get the top 10
     let monthlyReport = Array.from(theftReportByMonth );
       // .sort((a, b) => b[1] - a[1]) 
@@ -320,8 +318,6 @@ function plotlyScatter(year) {
     let months = monthlyReport.map(d => d[0]);
     let accidentCounts = monthlyReport.map(d => d[1]);
 
-    console.log(months);
-    console.log(accidentCounts);
 
     // Create a scatter plot using Plotly
     let trace = {
@@ -344,6 +340,8 @@ let myMap = L.map("map", {
   center: [43.75107, -79.847015],
   zoom: 10.5
 });
+
+
 // Adding the tile layer
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -357,18 +355,56 @@ function leafletmap(year) {
       year = +year;
       // Filter the data for the specified year and fatal injuries
       let dataForYearFatal = response.filter(d => d.YEAR === year && d.ACCLASS === "Fatal");
-      // Clear existing markers from the map
-      myMap.eachLayer(function (layer) {
-          if (layer instanceof L.Marker) {
-              myMap.removeLayer(layer);
-          }
+      let dataForYearNonFatal = response.filter(d=> d.YEAR === year && d.ACCLASS === "Non-Fatal Injury");
+
+      
+       // Clear existing markers from the map
+       myMap.eachLayer(function(layer) {
+        // Check if the layer is a GeoJSON layer or any other type that can be removed
+        if (layer instanceof L.Marker || layer instanceof L.CircleMarker || layer instanceof L.LayerGroup || layer instanceof L.geoJSON) {
+          myMap.removeLayer(layer);
+        }
       });
-      // Add markers to the map based on latitude and longitude for the specified year and fatal injuries
-      dataForYearFatal.forEach(data => {
-          const marker = L.marker([data.LATITUDE, data.LONGITUDE]).addTo(myMap);
-          // You can customize the marker icon, popup, etc. here
-          marker.bindPopup(`<b>${data.STREET1}</b><br>${data.DISTRICT}<br>${data.ACCLASS}`);
-      });
+   
+
+      // Create LayerGroups for Fatal and Non-Fatal accidents
+      let fatalLayerGroup = L.layerGroup();
+      let nonFatalLayerGroup = L.layerGroup();
+
+
+      // Add markers for Fatal accidents
+    dataForYearFatal.forEach(function(data) {
+      let marker = L.marker([data.LATITUDE, data.LONGITUDE])
+        .bindPopup(`<b>${data.STREET1}</b><br>${data.DISTRICT}<br>${data.ACCLASS}`);
+      fatalLayerGroup.addLayer(marker);
+    });
+
+    // Add markers for Non-Fatal accidents
+    dataForYearNonFatal.forEach(function(data) {
+      let marker = L.marker([data.LATITUDE, data.LONGITUDE])
+        .bindPopup(`<b>${data.STREET1}</b><br>${data.DISTRICT}<br>${data.ACCLASS}`);
+      nonFatalLayerGroup.addLayer(marker);
+    });
+
+    // Create an overlay object to hold our overlay layers
+    let overlayMaps = {
+      "Fatal": fatalLayerGroup,
+      "Non Fatal": nonFatalLayerGroup
+    };
+
+ 
+
+      // Create a layer control.
+      // Pass it our baseMaps and overlayMaps.
+      // Add the layer control to the map.
+      L.control.layers(null, overlayMaps, {
+      collapsed: false
+      }).addTo(myMap);
+
+      // Initially add both layers to the map
+    fatalLayerGroup.addTo(myMap);
+
+
   });
 }
    
