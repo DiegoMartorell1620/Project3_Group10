@@ -14,10 +14,15 @@
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
     crossorigin=""/>
   
-  <!-- Leaflet JavaScript code -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-  crossorigin=""></script>
+
+  <!--Load the AJAX API-->
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript"> </script>
+
+ <!-- Our CSS -->
+  <link rel="stylesheet" href="css/style.css">
+
+   
 </head>
 
 <body>
@@ -41,25 +46,73 @@
           <div class="card-header">
             <h4 class="card-title">Summary</h4>
           </div>
-          <div id="sample-metadata" class="card-body"></div>
+          <div id="summary-panel" class="card-body"></div>
         </div>
       </div>
       <div class="col-md-9">
-        <div id="bar"></div>
+        <div id="scatter"></div>
       </div>
     </div>
     <div class="row">
-      <div class="col-md-12">
-        <div id="bubble"></div>
+      <div class="col-md-9">
+        <div id="bar2"></div>
+      </div>
+      <br>      
+    </div>
+    <div class="row">
+      <div class="col-md-9">
+        <div id="bar1"></div>
       </div>
     </div>
+
+
+
   </div>
-  <div id="map"></div>
+
+      <!--Div that will hold the piechart dashboard--> 
+      <div class="col-sm-12">
+        <div id="dashboard_div" style="border: 1px solid #cccccc">
+          <table class="columns">
+            <tr>
+              <td>
+                <!--Divs that will hold each control and chart-->
+                <div id="filter_div" style="padding-left: 2em; min-width: 250px"></div>
+                <div>
+                  <button style="margin: 1em 1em 1em 2em" onclick="changeRange();">
+                    Select range [0, 100]
+                  </button><br />
+                  <button style="margin: 1em 1em 1em 2em" onclick="changeOptions();">
+                    Make the pie chart 3D
+                  </button>
+                </div>
+              </td>
+              <td>
+                <div id="chart_div"></div>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+   <!-- The div that holds our map -->
+   <div id="map"></div>
+ 
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-  <script src="app.js"></script>
+  
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
+  <!-- Leaflet.markercluster JavaScript -->
+  <script type="text/javascript" src="https://unpkg.com/leaflet.markercluster@1.0.3/dist/leaflet.markercluster.js"></script>
+  <!-- D3 JavaScript -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <!-- Our JavaScript -->
+  <script type="text/javascript" src="app.js"></script>
 
 </body>
 
