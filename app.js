@@ -108,7 +108,6 @@ function Accidentgraph(year) {
         height: 500,
         title: `Top 10 Neighborhoods with highest # Accidents in ${year}`,
         yaxis: { title: '# of Accidents', tickfont: {size:10}},
-        xaxis: {tickfont:{size: 10}, tickangle: 90}
       };
       Plotly.newPlot('bar2', [trace], layout);
   });
@@ -140,7 +139,7 @@ function Theftgraph(year) {
       };
       let layout = {
         //width: 500,  // Adjust width as needed
-        //height: 300,
+        height: 600,
         margin: { t: 200, l: 50, r: 50,},
         title: `Top 10 Neighborhoods with highest # of Thefts in ${year}`,
         yaxis: { title: '# of thefts' }
@@ -232,9 +231,7 @@ function googleChart(year) {
       // Transform data into an array
       let rdCondData = Array.from(rdCond);
       
-      // Confirming there are null values
-      // console.log(rdCondData);
-      
+     
       // Rename null values to "unspecified"
       for (data of rdCondData){
            if (data[0] === null) {data[0] = "Unspecified"};
@@ -309,10 +306,8 @@ function plotlyScatter(year) {
 
     );
 
-    // Sort the neighborhoods by accident count in descending order and get the top 10
+    // Converting the data into a list
     let monthlyReport = Array.from(theftReportByMonth );
-      // .sort((a, b) => b[1] - a[1]) 
-      // .slice(0, 10);
 
     // Extract the months and counts for the chart
     let months = monthlyReport.map(d => d[0]);
