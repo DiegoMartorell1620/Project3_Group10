@@ -207,7 +207,7 @@ function AccidentsByAgePieChart(year) {
     // Get the canvas element
     let ctx = document.getElementById('accidentsByAgeChart').getContext('2d');
   
-    // Create the pie chart 
+    // Create the pie chart
     let myPieChart = new Chart(ctx, config);
   })
 
