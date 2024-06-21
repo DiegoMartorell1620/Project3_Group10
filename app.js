@@ -285,6 +285,7 @@ function Theftgraph(year) {
   });
 }
 
+
 // Function to run on page load
 function init() {
       // Create an array of years from 2018 to 2023
@@ -326,6 +327,7 @@ function init() {
       AccidentsByAgePieChart(newYear);
       
     }
+
     //Update the event listener to call the optionChanged function when a new year is selected:
     d3.select("#selDataset").on("change", function() {
       // Get the selected year value from the dropdown
@@ -445,71 +447,123 @@ function plotlyScatter(year) {
 
     );
 
+    d3.json('Resources/traffic_accidents_data.json').then((data) => {
+      // Filter the data for the specified year
+      let trafDataForYear = data.filter(d => d.YEAR === year);
+      // Group the data by neighborhood and count the occurrences
+      let TrafAccidentsByMonth = d3.rollup(
+        trafDataForYear,
+      v => v.length,
+      d => d.MONTH
+      );
+
+
+
     // Converting the data into a list
-    let monthlyReport = Array.from(theftReportByMonth );
+    let theftMonthlyReport = Array.from(theftReportByMonth);
+    let TrafMonthlyReport = Array.from(TrafAccidentsByMonth)
 
     // Extract the months and counts for the chart
-    let months = monthlyReport.map(d => d[0]);
-    let accidentCounts = monthlyReport.map(d => d[1]);
+    let theftMonths = theftMonthlyReport.map(d => d[0]);
+    let theftCounts = theftMonthlyReport.map(d => d[1]);
+    let accMonths = TrafMonthlyReport.map(d => d[0]);
+    let accCounts = TrafMonthlyReport.map(d => d[1]);
 
 
     // Create a scatter plot using Plotly
-    let trace = {
-      x: months,
-      y: accidentCounts,
+    let trace1 = {
+      x: theftMonths,
+      y: theftCounts,
       mode: 'markers',
       type: 'scatter',
-      marker: { size: 12 }
+      marker: { size: 12 },
+      name: "Car Theft Count"
+    };
+
+    let trace2 = {
+      x: accMonths,
+      y:accCounts,
+      mode: 'markers',
+      type: 'scatter',
+      marker: { size: 12 },
+      name: "Car Accident Count"
     };
 
     layout = {
           title: `Car thefts reported each month for ${year}`
     };
 
-    Plotly.newPlot('scatter', [trace], layout);
-});
-}
-
-let myMap = L.map("map", {
-  center: [43.75107, -79.847015],
-  zoom: 10.5
-});
+    Plotly.newPlot('scatter', [trace1,trace2], layout);
+    })}
+  )};
 
 
-// Adding the tile layer
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-}).addTo(myMap);
+
+
 
 
 function leafletmap(year) {
+
+  let container = L.DomUtil.get('map');
+      if(container != null){
+        container._leaflet_id = null;
+      }
+
+  let myMap = L.map("map", {
+    center: [43.75107, -79.847015],
+    zoom: 10.5
+  });
+  
+  
+  // Adding the tile layer
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(myMap);
+
+  // Assuming myMap is your Leaflet map object
+  
+  // Remove existing layer control if it exists
+  if (typeof layerControl !== 'undefined') {
+    myMap.removeControl(layerControl);
+  }
+  
   // Get the data with D3
   d3.json('Resources/traffic_accidents_data.json').then(function(response) {
-      // Convert year to number
-      year = +year;
-      // Filter the data for the specified year and fatal injuries
-      let dataForYearFatal = response.filter(d => d.YEAR === year && d.ACCLASS === "Fatal");
-      let dataForYearNonFatal = response.filter(d=> d.YEAR === year && d.ACCLASS === "Non-Fatal Injury");
+    
+    // Clear existing markers from the map
+    Object.keys(myMap._layers).forEach(function (layer) {
+      if (myMap._layers[layer]._path != undefined) {
+        myMap.removeLayer(myMap._layers[layer]);
+      }
+    });
 
-      
-       // Clear existing markers from the map
-       myMap.eachLayer(function(layer) {
-        // Check if the layer is a GeoJSON layer or any other type that can be removed
-        if (layer instanceof L.Marker || layer instanceof L.CircleMarker || layer instanceof L.LayerGroup || layer instanceof L.geoJSON) {
-          myMap.removeLayer(layer);
-        }
-      });
-   
+    // Convert year to number
+    year = +year;
+    
+    // Filter the data for the specified year and fatal injuries
+    let dataForYearFatal = response.filter(d => d.YEAR === year && d.ACCLASS === "Fatal");
+    let dataForYearNonFatal = response.filter(d => d.YEAR === year && d.ACCLASS === "Non-Fatal Injury");
 
-      // Create LayerGroups for Fatal and Non-Fatal accidents
-      let fatalLayerGroup = L.layerGroup();
-      let nonFatalLayerGroup = L.layerGroup();
+    let fatalLayerGroup;
+    let nonFatalLayerGroup;
 
+    // Create LayerGroups for Fatal and Non-Fatal accidents
+    if (fatalLayerGroup) {
+      console.log(fatalLayerGroup),
+      myMap.removeLayer(fatalLayerGroup)
+    };
+    if (nonFatalLayerGroup) {
+      console.log(nonFatalLayerGroup),
+      myMap.removeLayer(nonFatalLayerGroup)
+    };
 
-      // Add markers for Fatal accidents
+    fatalLayerGroup = L.layerGroup();
+    nonFatalLayerGroup = L.layerGroup();
+
+    // Add markers for Fatal accidents
     dataForYearFatal.forEach(function(data) {
       let marker = L.marker([data.LATITUDE, data.LONGITUDE])
-        .bindPopup(`<b>${data.STREET1}</b><br>${data.DISTRICT}<br>${data.ACCLASS}`);
+        .bindPopup(`<b>${data.STREET1}</b><br>${data.DISTRICT}<br>${data.ACCLASS}<br> ${data.YEAR}</br>`);
       fatalLayerGroup.addLayer(marker);
     });
 
@@ -526,50 +580,13 @@ function leafletmap(year) {
       "Non Fatal": nonFatalLayerGroup
     };
 
- 
-
-      // Create a layer control.
-      // Pass it our baseMaps and overlayMaps.
-      // Add the layer control to the map.
-      L.control.layers(null, overlayMaps, {
+    // Create a new layer control
+    layerControl = L.control.layers(null, overlayMaps, {
       collapsed: false
-      }).addTo(myMap);
+    }).addTo(myMap);
 
-      // Initially add both layers to the map
+    // Initially add fatalLayers to the map
     fatalLayerGroup.addTo(myMap);
-
-
+    
   });
 }
-   
-
-    
-
-   
-  
-    
-    
-
-    
-
-
-   
-
-  
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
