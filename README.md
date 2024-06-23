@@ -22,14 +22,52 @@ The following project consists of visualizations that show car accidents and car
 A dropdown that can adjust every graph by the year we want to explore.
 
 <p align="center">
-<img src="images\dropdown_panel.png" width="500px">
+<img src="images\dropdown_panel.png" width="450px">
 </p>
+
 
 After selecting year, the the scatter plot in the center of the page will be updated to refelct the year and its car theft and accidents.
 
+
 <p align="center">
-<img src="images\scatter_plot.png" width="700px">
+<img src="images\scatter_plot.png" width="600px">
 </p>
+
+
+Then below, two bar graphs will be updated. The first graph shows the top 10 neighbourhoods with car accidents for that year and the second graph shows the top 10 neighbourhoods with car thefts for that year.
+
+
+<p align="center">
+<img src="images\bar_graph1.png" width="600px">
+</p>
+
+
+<p align="center">
+<img src="images\bar_graph2.png" width="600px">
+</p>
+
+After scrolling further down, users will get to see two pie charts; one being a pie chart of the ages of the the individuals involved in the accident and the second is a a pie chart of the road conditions for the accidents.
+
+
+<p align="center">
+<img src="images\pie_graph1.png" width="600px">
+</p>
+
+
+<p align="center">
+<img src="images\pie_graph2.png" width="600px">
+</p>
+
+
+At the end of our app there is a leaflet map that plots the accidents of a given year as interactive pop ups.
+
+
+<p align="center">
+<img src="images\leaflet_map1.png.png" width="800px">
+</p>
+
+
+
 
 
 
