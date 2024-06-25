@@ -78,50 +78,55 @@ function calculateAndDisplaySummary(selectedYear) {
 function AccidentsByAgePieChart(year) {
   // Load the JSON data for accidents
   d3.json('Resources/traffic_accidents_data.json').then(data => {
-    // Filter data by year
-    data = data.filter(d => d.YEAR === year);
+// Convert year to number (assuming 'year' is already a number in your context)
+year = +year;
 
-    // Filter out data where age is unknown or not specified
-    data = data.filter(d => d.INVAGE !== null && d.INVAGE !== undefined && d.INVAGE !== '');
+// Filter the data for the specified year
+let dataForYear = data.filter(d => d.YEAR === year);
 
-    // Define age categories 
-    let ageCategories = {
-      "0 to 4": "< 20",
-      "5 to 9": "< 20",
-      "10 to 14": "< 20",
-      "15 to 19": "< 20",
-      "20 to 24": "20-29",
-      "25 to 29": "20-29",
-      "30 to 34": "30-39",
-      "35 to 39": "30-39",
-      "40 to 44": "40-49",
-      "45 to 49": "40-49",
-      "50 to 54": "50-59",
-      "55 to 59": "50-59",
-      "60 to 64": "60-69",
-      "65 to 69": "60-69",
-      "70 to 74": "70+",
-      "75 to 79": "70+",
-      "80 to 84": "70+",
-      "85 to 89": "70+",
-      "90 to 94": "70+",
-      "Over 95": "70+",
-      "unknown": "Unknown"
-    };
+// Filter out data where age is unknown or not specified
+dataForYear = dataForYear.filter(d => d.INVAGE !== null && d.INVAGE !== undefined && d.INVAGE !== '');
 
-    let orderedLabels = ["< 20", "20-29", "30-39", "40-49", "50-59", "60-69", "70+", "Unknown"];
+// Define age categories 
+let ageCategories = {
+  "0 to 4": "< 20",
+  "5 to 9": "< 20",
+  "10 to 14": "< 20",
+  "15 to 19": "< 20",
+  "20 to 24": "20-29",
+  "25 to 29": "20-29",
+  "30 to 34": "30-39",
+  "35 to 39": "30-39",
+  "40 to 44": "40-49",
+  "45 to 49": "40-49",
+  "50 to 54": "50-59",
+  "55 to 59": "50-59",
+  "60 to 64": "60-69",
+  "65 to 69": "60-69",
+  "70 to 74": "70+",
+  "75 to 79": "70+",
+  "80 to 84": "70+",
+  "85 to 89": "70+",
+  "90 to 94": "70+",
+  "Over 95": "70+",
+  "unknown": "Unknown"
+};
 
-    // Group data by age and count occurrences in each category
-    let accidentCountByAgeCategory = data.reduce((acc, cur) => {
-      let ageRange = cur.INVAGE;
-      let ageCategory = ageCategories[ageRange] || "Unknown";
-      acc[ageCategory] = (acc[ageCategory] || 0) + 1;
-      return acc;
-    }, {});
+// Group the data by age category and count occurrences
+let accidentCountByAgeCategory = d3.rollup(
+  dataForYear,
+  v => v.length,
+  d => {
+    let ageRange = d.INVAGE;
+    return ageCategories[ageRange] || "Unknown";
+  }
+);
 
-    // Extract labels and data for the chart
-    let labels = orderedLabels.filter(label => accidentCountByAgeCategory[label] !== undefined);
-    let dataCounts = labels.map(label => accidentCountByAgeCategory[label]);
+// Extract labels and data for the chart
+let orderedLabels = ["< 20", "20-29", "30-39", "40-49", "50-59", "60-69", "70+", "Unknown"];
+
+let labels = orderedLabels.filter(label => accidentCountByAgeCategory.get(label) !== undefined);
+let dataCounts = labels.map(label => accidentCountByAgeCategory.get(label));
 
     // Define colors for each category 
     let colors = [
@@ -204,14 +209,25 @@ function AccidentsByAgePieChart(year) {
       }
     };
 
-    // Get the canvas element
-    let ctx = document.getElementById('accidentsByAgeChart').getContext('2d');
-  
-    // Create the pie chart
-    let myPieChart = new Chart(ctx, config);
-  })
+        // Get canvas element
+        let canvas = document.getElementById('accidentsByAgeChart');
+        let ctx = canvas.getContext('2d');
+
+        // Destroy previous chart instance if it exists
+        if (window.myPieChart) {
+            window.myPieChart.destroy();
+        }
+
+        // Clear the canvas before creating a new chart
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Create the new chart
+        window.myPieChart = new Chart(ctx, config);
+    });
 
 }
+
+
 function Accidentgraph(year) {
   d3.json('Resources/traffic_accidents_data.json').then((data) => {
       // Convert year to number
@@ -244,7 +260,7 @@ function Accidentgraph(year) {
         //width: 500,  
         height: 500,
         title: `Top 10 Neighborhoods with highest # Accidents in ${year}`,
-        yaxis: { title: '# of Car Accidents', tickfont: {size:10}},
+        yaxis: { title: '# of Accidents', tickfont: {size:10}},
       };
       Plotly.newPlot('bar2', [trace], layout);
   });
@@ -279,7 +295,7 @@ function Theftgraph(year) {
         height: 600,
         margin: { t: 200, l: 50, r: 50,},
         title: `Top 10 Neighborhoods with highest # of Thefts in ${year}`,
-        yaxis: { title: '# of Car Thefts' }
+        yaxis: { title: '# of thefts' }
       };
       Plotly.newPlot('bar1', [trace], layout);
   });
@@ -490,7 +506,7 @@ function plotlyScatter(year) {
     };
 
     layout = {
-          title: `Car accidents and car thefts reported in ${year}`
+          title: `Car thefts reported each month for ${year}`
     };
 
     Plotly.newPlot('scatter', [trace1,trace2], layout);
@@ -510,7 +526,7 @@ function leafletmap(year) {
       }
 
   let myMap = L.map("map", {
-    center: [43.692008, -79.361987],
+    center: [43.75107, -79.847015],
     zoom: 10.5
   });
   
@@ -544,17 +560,6 @@ function leafletmap(year) {
     let dataForYearFatal = response.filter(d => d.YEAR === year && d.ACCLASS === "Fatal");
     let dataForYearNonFatal = response.filter(d => d.YEAR === year && d.ACCLASS === "Non-Fatal Injury");
 
-    // Rename null values to "unspecified"
-    for (data of dataForYearFatal){
-      console.log(data[6])
-      if (data.RDSFCOND === null) {data.RDSFCOND = "Unspecified"};
-  }
-
-  
-  for (data of dataForYearNonFatal){
-    if (data.RDSFCOND === null) {data.RDSFCOND = "Unspecified"};
-  }
-
     let fatalLayerGroup;
     let nonFatalLayerGroup;
 
@@ -574,14 +579,14 @@ function leafletmap(year) {
     // Add markers for Fatal accidents
     dataForYearFatal.forEach(function(data) {
       let marker = L.marker([data.LATITUDE, data.LONGITUDE])
-        .bindPopup(`<b>${data.STREET1}</b><br>${data.DISTRICT}<br>Lighting: ${data.LIGHT}<br>Road Condition: ${data.RDSFCOND}<br>`);
+        .bindPopup(`<b>${data.STREET1}</b><br>${data.DISTRICT}<br>${data.ACCLASS}<br> ${data.YEAR}</br>`);
       fatalLayerGroup.addLayer(marker);
     });
 
     // Add markers for Non-Fatal accidents
     dataForYearNonFatal.forEach(function(data) {
       let marker = L.marker([data.LATITUDE, data.LONGITUDE])
-        .bindPopup(`<b>${data.STREET1}</b><br>${data.DISTRICT}<br>Lighting: ${data.LIGHT}<br>Road Condition: ${data.RDSFCOND}<br>`);
+        .bindPopup(`<b>${data.STREET1}</b><br>${data.DISTRICT}<br>${data.ACCLASS}`);
       nonFatalLayerGroup.addLayer(marker);
     });
 
