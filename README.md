@@ -6,7 +6,9 @@
 
 ## Introduction
 
-The following project consists of visualizations that show car accidents and car thefts in the GTA during the years 2018-2023. We have 7 visuals that show the following:
+You can view our app by going to this url: https://diegomartorell1620.github.io/Project3_Group10/
+
+The following project creates a dashboard app with visualizations that show car accidents and car thefts in the GTA during the years 2018-2023. We have 6 visuals that show the following:
 
 -Number of car thefts by month 
 -Number of car accidents by neighbourhood (Only top 10)
@@ -65,6 +67,21 @@ At the end of our app there is a leaflet map that plots the accidents of a given
 <p align="center">
 <img src="images\leaflet_map1.png.png" width="800px">
 </p>
+
+## Group members contributions
+
+Project idea: Diego
+Obtaining the data: Diego (car theft) & Cadeem (car accidents)
+Cleaning the data: Diego
+Bar graphs: Diego & Cadeem
+Scatter plots: Cadeem
+Pie charts: Andrea & Cadeem
+Leaflet map: Diego (base map) & Cadeem (interactivity)
+Debugging: Andrea & Cadeem
+Presentation slides: Andrea & Diego
+
+## Credits
+Toronto Police Services and City of Toronto (2017) Total KSI, Toronto Police Service Public Safety Data Portal. Available at: https://data.torontopolice.on.ca/pages/total-ksi (Accessed: 13 June 2024). 
 
 
 

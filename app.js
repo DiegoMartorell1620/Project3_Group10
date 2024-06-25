@@ -244,7 +244,7 @@ function Accidentgraph(year) {
         //width: 500,  
         height: 500,
         title: `Top 10 Neighborhoods with highest # Accidents in ${year}`,
-        yaxis: { title: '# of Accidents', tickfont: {size:10}},
+        yaxis: { title: '# of Car Accidents', tickfont: {size:10}},
       };
       Plotly.newPlot('bar2', [trace], layout);
   });
@@ -279,7 +279,7 @@ function Theftgraph(year) {
         height: 600,
         margin: { t: 200, l: 50, r: 50,},
         title: `Top 10 Neighborhoods with highest # of Thefts in ${year}`,
-        yaxis: { title: '# of thefts' }
+        yaxis: { title: '# of Car Thefts' }
       };
       Plotly.newPlot('bar1', [trace], layout);
   });
@@ -490,7 +490,7 @@ function plotlyScatter(year) {
     };
 
     layout = {
-          title: `Car thefts reported each month for ${year}`
+          title: `Car accidents and car thefts reported in ${year}`
     };
 
     Plotly.newPlot('scatter', [trace1,trace2], layout);
@@ -510,7 +510,7 @@ function leafletmap(year) {
       }
 
   let myMap = L.map("map", {
-    center: [43.75107, -79.847015],
+    center: [43.692008, -79.361987],
     zoom: 10.5
   });
   
@@ -544,6 +544,17 @@ function leafletmap(year) {
     let dataForYearFatal = response.filter(d => d.YEAR === year && d.ACCLASS === "Fatal");
     let dataForYearNonFatal = response.filter(d => d.YEAR === year && d.ACCLASS === "Non-Fatal Injury");
 
+    // Rename null values to "unspecified"
+    for (data of dataForYearFatal){
+      console.log(data[6])
+      if (data.RDSFCOND === null) {data.RDSFCOND = "Unspecified"};
+  }
+
+  
+  for (data of dataForYearNonFatal){
+    if (data.RDSFCOND === null) {data.RDSFCOND = "Unspecified"};
+  }
+
     let fatalLayerGroup;
     let nonFatalLayerGroup;
 
@@ -563,14 +574,14 @@ function leafletmap(year) {
     // Add markers for Fatal accidents
     dataForYearFatal.forEach(function(data) {
       let marker = L.marker([data.LATITUDE, data.LONGITUDE])
-        .bindPopup(`<b>${data.STREET1}</b><br>${data.DISTRICT}<br>${data.ACCLASS}<br> ${data.YEAR}</br>`);
+        .bindPopup(`<b>${data.STREET1}</b><br>${data.DISTRICT}<br>Lighting: ${data.LIGHT}<br>Road Condition: ${data.RDSFCOND}<br>`);
       fatalLayerGroup.addLayer(marker);
     });
 
     // Add markers for Non-Fatal accidents
     dataForYearNonFatal.forEach(function(data) {
       let marker = L.marker([data.LATITUDE, data.LONGITUDE])
-        .bindPopup(`<b>${data.STREET1}</b><br>${data.DISTRICT}<br>${data.ACCLASS}`);
+        .bindPopup(`<b>${data.STREET1}</b><br>${data.DISTRICT}<br>Lighting: ${data.LIGHT}<br>Road Condition: ${data.RDSFCOND}<br>`);
       nonFatalLayerGroup.addLayer(marker);
     });
 
