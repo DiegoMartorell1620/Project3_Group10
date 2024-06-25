@@ -7,6 +7,7 @@
 ## Introduction
 
 You can view our app by going to this url: https://diegomartorell1620.github.io/Project3_Group10/
+
 The following project creates a dashboard app with visualizations that show car accidents and car thefts in the GTA during the years 2018-2023. We have 6 visuals that show the following:
 
 -Number of car thefts by month 
