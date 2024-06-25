@@ -546,9 +546,12 @@ function leafletmap(year) {
 
     // Rename null values to "unspecified"
     for (data of dataForYearFatal){
+      console.log(data[6])
       if (data.RDSFCOND === null) {data.RDSFCOND = "Unspecified"};
   }
-  // Rename null values to "unspecified"
+
+  
+
   for (data of dataForYearNonFatal){
     if (data.RDSFCOND === null) {data.RDSFCOND = "Unspecified"};
   }
