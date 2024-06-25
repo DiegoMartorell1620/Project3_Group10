@@ -551,7 +551,6 @@ function leafletmap(year) {
   }
 
   
-
   for (data of dataForYearNonFatal){
     if (data.RDSFCOND === null) {data.RDSFCOND = "Unspecified"};
   }
