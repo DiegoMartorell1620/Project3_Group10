@@ -544,6 +544,15 @@ function leafletmap(year) {
     let dataForYearFatal = response.filter(d => d.YEAR === year && d.ACCLASS === "Fatal");
     let dataForYearNonFatal = response.filter(d => d.YEAR === year && d.ACCLASS === "Non-Fatal Injury");
 
+    // Rename null values to "unspecified"
+    for (data of dataForYearFatal){
+      if (data.RDSFCOND === null) {data.RDSFCOND = "Unspecified"};
+  }
+  // Rename null values to "unspecified"
+  for (data of dataForYearNonFatal){
+    if (data.RDSFCOND === null) {data.RDSFCOND = "Unspecified"};
+  }
+
     let fatalLayerGroup;
     let nonFatalLayerGroup;
 
